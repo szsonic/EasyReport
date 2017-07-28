@@ -13,7 +13,7 @@ var ScheduleTask = {
 
 var TaskCommon = {
     baseUrl: EasyReport.ctxPath + '/rest/schedule/task/',
-    baseReportUrl: EasyReport.ctxPath + '/rest/schedule/designer/',
+    baseReportUrl: EasyReport.ctxPath + '/rest/report/designer/',
     baseIconUrl: EasyReport.ctxPath + '/custom/easyui/themes/icons/'
 };
 
@@ -36,7 +36,7 @@ var TaskMVC = {
             method: 'POST'
         },
         getAllReports: {
-            url: TaskCommon.baseReportUrl + 'getAll',
+            url: TaskCommon.baseReportUrl + 'list',
             method: 'POST'
         },
         getJsonOptions: {
@@ -99,7 +99,7 @@ var TaskMVC = {
                     field: 'cronExpr',
                     title: 'Cron表达式',
                     width: 150,
-                    sortable: true,
+                    sortable: true
                 }, {
                     field: 'type',
                     title: '类型',
@@ -218,6 +218,7 @@ var TaskMVC = {
             var row = $('#task-datagrid').datagrid('getSelected');
             if (row) {
                 var options = TaskMVC.Util.getOptions();
+                var roleIds = row.roles || "";
                 options.iconCls = 'icon-edit1';
                 options.data = row;
                 options.title = '修改[' + options.data.name + ']任务';

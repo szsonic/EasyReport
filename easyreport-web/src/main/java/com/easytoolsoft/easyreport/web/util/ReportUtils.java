@@ -1,22 +1,7 @@
 package com.easytoolsoft.easyreport.web.util;
 
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.fastjson.JSONObject;
-
-import com.easytoolsoft.easyreport.engine.data.ReportDataSource;
-import com.easytoolsoft.easyreport.engine.data.ReportMetaDataColumn;
-import com.easytoolsoft.easyreport.engine.data.ReportMetaDataSet;
-import com.easytoolsoft.easyreport.engine.data.ReportParameter;
-import com.easytoolsoft.easyreport.engine.data.ReportTable;
+import com.easytoolsoft.easyreport.engine.data.*;
 import com.easytoolsoft.easyreport.engine.query.Queryer;
 import com.easytoolsoft.easyreport.engine.util.DateUtils;
 import com.easytoolsoft.easyreport.meta.domain.Report;
@@ -25,11 +10,24 @@ import com.easytoolsoft.easyreport.meta.form.QueryParamFormView;
 import com.easytoolsoft.easyreport.meta.form.control.HtmlFormElement;
 import com.easytoolsoft.easyreport.meta.service.ReportService;
 import com.easytoolsoft.easyreport.meta.service.TableReportService;
+import com.itextpdf.text.pdf.BaseFont;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import org.xhtmlrenderer.pdf.ITextFontResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Tom Deng
@@ -160,8 +158,8 @@ public class ReportUtils {
                                      final HttpServletResponse response) {
         htmlText = htmlText.replaceFirst("<table>", "<tableFirst>");
         htmlText = htmlText.replaceAll("<table>",
-            "<table cellpadding=\"3\" cellspacing=\"0\"  border=\"1\" rull=\"all\" style=\"border-collapse: "
-                + "collapse\">");
+                "<table cellpadding=\"3\" cellspacing=\"0\"  border=\"1\" rull=\"all\" style=\"border-collapse: "
+                        + "collapse\">");
         htmlText = htmlText.replaceFirst("<tableFirst>", "<table>");
         try (OutputStream out = response.getOutputStream()) {
             String fileName = name + "_" + DateUtils.getNow("yyyyMMddHHmmss");
@@ -170,18 +168,70 @@ public class ReportUtils {
                 final Report report = reportService.getByUid(uid);
                 final ReportOptions options = reportService.parseOptions(report.getOptions());
                 final Map<String, Object> formParameters = tableReportService.getFormParameters(
-                    request.getParameterMap(),
-                    options.getDataRange());
+                        request.getParameterMap(),
+                        options.getDataRange());
                 final ReportTable reportTable = tableReportService.getReportTable(report, formParameters);
                 htmlText = reportTable.getHtmlText();
             }
             response.reset();
             response.setHeader("Content-Disposition", String.format("attachment; filename=%s", fileName));
             response.setContentType("application/vnd.ms-excel; charset=utf-8");
-            response.addCookie(new Cookie("fileDownload", "true"));
-            //out.write(new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF}); // 生成带bom的utf8文件
+            Cookie cookie=new Cookie("fileDownload","true");
+            cookie.setPath("/");
+            response.addCookie(cookie);
             out.write(htmlText.getBytes());
             out.flush();
+        } catch (final Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    public static void exportToPdf(final String uid, final String name, String htmlText,
+                                     final HttpServletRequest request,
+                                     final HttpServletResponse response) {
+        htmlText = htmlText.replaceFirst("<table>", "<tableFirst>");
+        htmlText = htmlText.replaceAll("<table>",
+                "<table cellpadding=\"3\" cellspacing=\"0\"  border=\"1\" rull=\"all\" style=\"border-collapse: "
+                        + "collapse\">");
+        htmlText = htmlText.replaceFirst("<tableFirst>", "<table>");
+        try (OutputStream out = response.getOutputStream()) {
+            String fileName = name + "_" + DateUtils.getNow("yyyyMMddHHmmss");
+            fileName = new String(fileName.getBytes(), "ISO8859-1") + ".pdf";
+            if ("large".equals(htmlText)) {
+                final Report report = reportService.getByUid(uid);
+                final ReportOptions options = reportService.parseOptions(report.getOptions());
+                final Map<String, Object> formParameters = tableReportService.getFormParameters(
+                        request.getParameterMap(),
+                        options.getDataRange());
+                final ReportTable reportTable = tableReportService.getReportTable(report, formParameters);
+                htmlText = reportTable.getHtmlText();
+            }
+            ITextRenderer renderer = new ITextRenderer();
+            ITextFontResolver fontResolver = renderer.getFontResolver();
+            fontResolver.addFont("C:/Windows/fonts/simsun.ttc", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            StringBuffer html = new StringBuffer();
+            // DOCTYPE 必需写否则类似于 这样的字符解析会出现错误
+            html.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN/\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+            html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">")
+                    .append("<head>")
+                    .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />")
+                    .append("<style type=\"text/css\" mce_bogus=\"1\">body {font-family: SimSun;}</style>")
+                    .append("</head>")
+                    .append("<body>");
+            html.append(htmlText);
+            html.append("</body></html>");
+            renderer.setDocumentFromString(html.toString());
+            response.reset();
+            response.setHeader("Content-Disposition", String.format("attachment; filename=%s", fileName));
+            response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+            Cookie cookie=new Cookie("fileDownload","true");
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            renderer.layout();
+            renderer.createPDF(out);
+            out.flush();
+            out.close();
         } catch (final Exception ex) {
             throw new RuntimeException(ex);
         }

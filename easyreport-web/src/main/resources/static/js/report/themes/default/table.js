@@ -21,7 +21,8 @@ ReportTemplate.Mode = {
 
 ReportTemplate.URL = {
 	generate : WebAppRequest.getContextPath() + '/report/generate',
-	exportToExcel : WebAppRequest.getContextPath() + '/report/exportExcel'
+	exportToExcel : WebAppRequest.getContextPath() + '/report/exportExcel',
+    exportToPDF : WebAppRequest.getContextPath() + '/report/exportPdf'
 };
 
 ReportTemplate.generate = function(mode, callback) {

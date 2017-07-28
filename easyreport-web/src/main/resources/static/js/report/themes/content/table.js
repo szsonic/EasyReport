@@ -20,6 +20,10 @@ var TableReportMVC = {
         exportExcel: {
             url: TableReportCommon.baseUrl + '/table/exportExcel',
             method: 'POST'
+        },
+        exportPdf: {
+            url: TableReportCommon.baseUrl + '/table/exportPdf',
+            method: 'POST'
         }
     },
     View: {
@@ -29,6 +33,7 @@ var TableReportMVC = {
         bindEvent: function () {
             $('#btn-generate').click(TableReportMVC.Controller.generate);
             $('#btn-export-excel').click(TableReportMVC.Controller.exportToExcel);
+            $('#btn-export-pdf').click(TableReportMVC.Controller.exportToPdf);
             $("#table-report-columns input[name='checkAllStatColumn']").click(function (e) {
                 var checked = $("#table-report-columns input[name='checkAllStatColumn']").prop("checked");
                 $("#table-report-columns input[name='statColumns']").prop("checked", checked);
@@ -88,6 +93,34 @@ var TableReportMVC = {
             }
 
             var url = TableReportMVC.URLs.exportExcel.url;
+            var data = $('#table-report-form').serializeObject();
+            data["htmlText"] = htmlText;
+
+            $.messager.progress({
+                title: '请稍后...',
+                text: '报表正在生成中...',
+            });
+            $.fileDownload(url, {
+                httpMethod: "POST",
+                data: data
+            }).done(function () {
+                $.messager.progress("close");
+            }).fail(function () {
+                $.messager.progress("close");
+            });
+            e.preventDefault();
+        },
+        exportToPdf: function (e) {
+            var htmlText = '';
+            htmlText += (TableReportMVC.Util.filterTable || '');
+            htmlText += '<table>' + $('#easyreport').html() + '</table>';
+
+            var bytes = TableReportMVC.Util.getExcelBytes(htmlText);
+            if (bytes > 2000000) {
+                htmlText = "large";
+            }
+
+            var url = TableReportMVC.URLs.exportPdf.url;
             var data = $('#table-report-form').serializeObject();
             data["htmlText"] = htmlText;
 

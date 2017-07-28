@@ -43,7 +43,7 @@
             </foreach>
         </where>
     </sql>
-    <sql id="Table_Name">ezrpt_meta_task</sql>
+    <sql id="Table_Name">ezrpt_schedule_task</sql>
     <sql id="Base_Column_List_Without_Id">
         report_ids , cron_expr , type , options , template , comment , gmt_created , gmt_modified
     </sql>

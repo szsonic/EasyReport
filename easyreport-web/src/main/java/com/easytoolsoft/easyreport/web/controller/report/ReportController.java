@@ -1,13 +1,6 @@
 package com.easytoolsoft.easyreport.web.controller.report;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.fastjson.JSONObject;
-
 import com.easytoolsoft.easyreport.engine.data.ReportDataSet;
 import com.easytoolsoft.easyreport.engine.exception.NotFoundLayoutColumnException;
 import com.easytoolsoft.easyreport.engine.exception.QueryParamsException;
@@ -28,12 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * 报表生成控制器
@@ -168,6 +162,19 @@ public class ReportController {
             ReportUtils.exportToExcel(uid, name, htmlText, request, response);
         } catch (final Exception ex) {
             log.error("导出Excel失败", ex);
+        }
+    }
+
+
+    @PostMapping(value = "/table/exportPdf")
+    @OpLog(name = "导出报表为PDF")
+    //@RequiresPermissions("report.designer:export")
+    public void exportToPdf(final String uid, final String name, final String htmlText,
+                              final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            ReportUtils.exportToPdf(uid, name, htmlText, request, response);
+        } catch (final Exception ex) {
+            log.error("导出PDF失败", ex);
         }
     }
 }
