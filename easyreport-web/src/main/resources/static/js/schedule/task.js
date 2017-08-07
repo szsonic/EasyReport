@@ -303,8 +303,8 @@ var TaskMVC = {
             }
         },
         loadReportList: function () {
-            $.getJSON(TaskMVC.URLs.getAllReports.url, function (src) {
-                TaskMVC.Model.reports = src.data;
+            $.getJSON(TaskMVC.URLs.getAllReports.url+ "?id=711", function (src) {
+                TaskMVC.Model.reports = src.data.rows;
             });
         },
         getJsonOptions: function (type) {

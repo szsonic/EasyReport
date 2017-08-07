@@ -1,7 +1,5 @@
 package com.easytoolsoft.easyreport.scheduler.config.datasource;
 
-import javax.sql.DataSource;
-
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -11,8 +9,11 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.sql.DataSource;
 
 /**
  * 用户与权限业务数据源配置类
@@ -29,6 +30,7 @@ public class MemberDataSourceConfig extends AbstractDataSourceConfig {
     @Value("${easytoolsoft.easyreport.member.datasource.type}")
     private Class<? extends DataSource> dataSourceType;
 
+    @Primary
     @ConfigurationProperties(prefix = "easytoolsoft.easyreport.member.datasource")
     @Bean(name = "memberDataSource")
     public DataSource dataSource() {
@@ -37,17 +39,20 @@ public class MemberDataSourceConfig extends AbstractDataSourceConfig {
             .build();
     }
 
+    @Primary
     @Bean(name = "memberTransactionManager")
     public DataSourceTransactionManager transactionManager(@Qualifier("memberDataSource") final DataSource dataSource) {
         return this.createTransactionManager(dataSource);
     }
 
+    @Primary
     @Bean(name = "memberSqlSessionFactory")
     public SqlSessionFactory sqlSessionFactory(@Qualifier("memberDataSource") final DataSource dataSource)
         throws Exception {
         return this.createSqlSessionFactory(dataSource, MAPPER_LOCATION);
     }
 
+    @Primary
     @Bean(name = "memberSqlSessionTemplate")
     public SqlSessionTemplate sqlSessionTemplate(@Qualifier("memberSqlSessionFactory") final
                                                  SqlSessionFactory sqlSessionFactory)
@@ -55,6 +60,7 @@ public class MemberDataSourceConfig extends AbstractDataSourceConfig {
         return this.createSqlSessionTemplate(sqlSessionFactory);
     }
 
+    @Primary
     @Bean(name = "memberTransactionTemplate")
     public TransactionTemplate transactionTemplate(@Qualifier("memberTransactionManager") final
                                                    DataSourceTransactionManager transactionManager)
