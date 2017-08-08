@@ -1,18 +1,6 @@
 package com.easytoolsoft.easyreport.web.controller.report;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import com.alibaba.fastjson.JSON;
-
 import com.easytoolsoft.easyreport.common.pair.IdNamePair;
 import com.easytoolsoft.easyreport.engine.data.ReportMetaDataColumn;
 import com.easytoolsoft.easyreport.engine.util.VelocityUtils;
@@ -39,6 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * 报表设计器
  *
@@ -63,7 +56,9 @@ public class DesignerController
     @RequiresPermissions("report.designer:view")
     public Map<String, Object> list(final DataGridPager pager, final Integer id) {
         final PageInfo pageInfo = this.getPageInfo(pager);
-        final List<Report> list = this.service.getByPage(pageInfo, "t1.category_id", id == null ? 0 : id);
+        //update by Blue
+//        final List<Report> list = this.service.getByPage(pageInfo, "t1.category_id", id == null ? 0 : id);
+        final List<Report> list = this.service.getByPage(pageInfo, "0", 0);
         final Map<String, Object> modelMap = new HashMap<>(2);
         modelMap.put("total", pageInfo.getTotals());
         modelMap.put("rows", list);
