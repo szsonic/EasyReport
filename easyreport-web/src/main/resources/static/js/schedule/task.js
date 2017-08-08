@@ -14,6 +14,7 @@ var ScheduleTask = {
 var TaskCommon = {
     baseUrl: EasyReport.ctxPath + '/rest/schedule/task/',
     baseReportUrl: EasyReport.ctxPath + '/rest/report/designer/',
+    baseRoleUrl: EasyReport.ctxPath + '/rest/member/role/',
     baseIconUrl: EasyReport.ctxPath + '/custom/easyui/themes/icons/'
 };
 
@@ -39,13 +40,18 @@ var TaskMVC = {
             url: TaskCommon.baseReportUrl + 'list',
             method: 'POST'
         },
+        getAllRoles: {
+            url: TaskCommon.baseRoleUrl + 'list',
+            method: 'GET'
+        },
         getJsonOptions: {
             url: TaskCommon.baseUrl + 'getJsonOptions',
             method: 'GET'
         }
     },
     Model: {
-        reports: {}
+        reports: {},
+        roles:{}
     },
     View: {
         initControl: function () {
@@ -110,6 +116,11 @@ var TaskMVC = {
                         if (value === 2) return "手机短信";
                         return "其他";
                     }
+                }, {
+                    field: 'name',
+                    title: '任务名称',
+                    width: 80,
+                    sortable: true
                 }, {
                     field: 'comment',
                     title: '说明',
@@ -199,6 +210,7 @@ var TaskMVC = {
         },
         initData: function () {
             TaskMVC.Util.loadReportList();
+            TaskMVC.Util.loadRolesList();
         }
     },
     Controller: {
@@ -218,6 +230,7 @@ var TaskMVC = {
             $('#type').combobox('setValue', "1");
             $('#cronExpr').textbox('setValue', '42 3 1 * *');
             TaskMVC.Util.fillReportCombox("add", []);
+            TaskMVC.Util.fillRolesCombox("add", []);
         },
         edit: function () {
             var row = $('#task-datagrid').datagrid('getSelected');
@@ -229,6 +242,7 @@ var TaskMVC = {
                 options.title = '修改[' + options.data.name + ']任务';
                 EasyUIUtils.openEditDlg(options);
                 TaskMVC.Util.fillReportCombox("edit", roleIds.split(','));
+                TaskMVC.Util.fillRolesCombox("edit", roleIds.split(','));
             } else {
                 $.messager.alert('警告', '请选中一条记录!', 'info');
             }
@@ -269,6 +283,7 @@ var TaskMVC = {
             };
 
             $('#reportIds').val($('#combox-reports').combobox('getValues'));
+            $('#roleIds').val($('#combox-roles').combobox('getValues'));
             options.url = (action === "edit" ? TaskMVC.URLs.edit.url : TaskMVC.URLs.add.url);
             options.gridId = '#task-datagrid';
             return EasyUIUtils.save(options);
@@ -307,9 +322,32 @@ var TaskMVC = {
                 $(id).combobox('setValues', values);
             }
         },
+        fillRolesCombox: function (act, values) {
+            var id = '#combox-roles';
+            $(id).combobox('clear');
+            var data = [];
+            var items = TaskMVC.Model.roles;
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                data.push({
+                    "value": item.id,
+                    "name": item.name,
+                    "selected": i == 0
+                });
+            }
+            $(id).combobox('loadData', data);
+            if (act == "edit") {
+                $(id).combobox('setValues', values);
+            }
+        },
         loadReportList: function () {
             $.getJSON(TaskMVC.URLs.getAllReports.url+ "?id=711", function (src) {
                 TaskMVC.Model.reports = src.data.rows;
+            });
+        },
+        loadRolesList:function () {
+            $.getJSON(TaskMVC.URLs.getAllRoles.url, function (src) {
+                TaskMVC.Model.roles = src.data.rows;
             });
         },
         getJsonOptions: function (type) {

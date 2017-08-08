@@ -7,6 +7,7 @@
         <result column="report_ids" property="reportIds" jdbcType="VARCHAR"/>
         <result column="cron_expr" property="cronExpr" jdbcType="VARCHAR"/>
         <result column="type" property="type" jdbcType="TINYINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="options" property="options" jdbcType="LONGVARCHAR"/>
         <result column="template" property="template" jdbcType="LONGVARCHAR"/>
         <result column="comment" property="comment" jdbcType="VARCHAR"/>
@@ -46,7 +47,7 @@
     </sql>
     <sql id="Table_Name">ezrpt_schedule_task</sql>
     <sql id="Base_Column_List_Without_Id">
-        report_ids , cron_expr , type , options , template , comment , gmt_created , gmt_modified, role_ids
+        report_ids , cron_expr , type , name, options , template , comment , gmt_created , gmt_modified, role_ids
     </sql>
     <sql id="Base_Column_List">
         id ,
@@ -56,17 +57,19 @@
         <if test="record.reportIds != null">report_ids,</if>
         <if test="record.cronExpr != null">cron_expr,</if>
         <if test="record.type != null">type,</if>
+        <if test="record.name != null">name,</if>
         <if test="record.options != null">options,</if>
         <if test="record.template != null">template,</if>
         <if test="record.comment != null">comment,</if>
         <if test="record.gmtCreated != null">gmt_created,</if>
         <if test="record.gmtModified != null">gmt_modified,</if>
-        <if test="record.roleIds != null">roles_ids,</if>
+        <if test="record.roleIds != null">role_ids,</if>
     </sql>
     <sql id="Insert_Values">
         <if test="record.reportIds != null">#{record.reportIds,jdbcType=VARCHAR},</if>
         <if test="record.cronExpr != null">#{record.cronExpr,jdbcType=VARCHAR},</if>
         <if test="record.type != null">#{record.type,jdbcType=TINYINT},</if>
+        <if test="record.name != null">#{record.name,jdbcType=VARCHAR},</if>
         <if test="record.options != null">#{record.options,jdbcType=LONGVARCHAR},</if>
         <if test="record.template != null">#{record.template,jdbcType=LONGVARCHAR},</if>
         <if test="record.comment != null">#{record.comment,jdbcType=VARCHAR},</if>
@@ -78,6 +81,7 @@
         #{record.reportIds,jdbcType=VARCHAR},
         #{record.cronExpr,jdbcType=VARCHAR},
         #{record.type,jdbcType=TINYINT},
+         #{record.name,jdbcType=VARCHAR},
         #{record.options,jdbcType=LONGVARCHAR},
         #{record.template,jdbcType=LONGVARCHAR},
         #{record.comment,jdbcType=VARCHAR},
@@ -93,6 +97,7 @@
         <if test="record.reportIds != null">report_ids = #{record.reportIds,jdbcType=VARCHAR} ,</if>
         <if test="record.cronExpr != null">cron_expr = #{record.cronExpr,jdbcType=VARCHAR} ,</if>
         <if test="record.type != null">type = #{record.type,jdbcType=TINYINT} ,</if>
+        <if test="record.name != null">name = #{record.name,jdbcType=VARCHAR} ,</if>
         <if test="record.options != null">options = #{record.options,jdbcType=LONGVARCHAR} ,</if>
         <if test="record.template != null">template = #{record.template,jdbcType=LONGVARCHAR} ,</if>
         <if test="record.comment != null">comment = #{record.comment,jdbcType=VARCHAR} ,</if>
@@ -140,7 +145,7 @@
             </trim>
         </foreach>
         ON DUPLICATE KEY UPDATE
-        report_ids = VALUES(report_ids) , cron_expr = VALUES(cron_expr) , type = VALUES(type) , options =
+        report_ids = VALUES(report_ids) , cron_expr = VALUES(cron_expr) , type = VALUES(type) , name = VALUES(name) , options =
         VALUES(options) , template = VALUES(template) , comment = VALUES(comment) , gmt_created = VALUES(gmt_created) ,
         gmt_modified = VALUES(gmt_modified), role_ids = VALUES(role_ids)
     </insert>

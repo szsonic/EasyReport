@@ -33,6 +33,10 @@ public class Task implements Serializable {
      */
     private Byte type;
     /**
+     * 报表任务名称
+     */
+    private String name;
+    /**
      * 配置选项(JSON格式)
      */
     private String options;

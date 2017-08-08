@@ -40,6 +40,20 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>选择角色:</td>
+                    <td colspan="3">
+                        <select class="easyui-combobox" id="combox-roles" name="comboxRoles"
+                                data-options="required:true,valueField:'value',textField:'name',multiple:true"
+                                style="width: 380px"></select>
+                        <input id="roleIds" type="hidden" name="roleIds"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>任务名称:</td>
+                    <td><input class="easyui-textbox" type="text" name="name" id="name" data-options="required:true"
+                               style="width: 200px"/></td>
+                </tr>
+                <tr>
                     <td>触发时间:</td>
                     <td colspan="3">
                         <div id='cronExprDiv'></div>
