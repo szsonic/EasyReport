@@ -1,5 +1,6 @@
 package com.easytoolsoft.easyreport.support.security;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,4 +48,28 @@ public interface MembershipFacade<User> {
      * @return
      */
     boolean isAdministrator(String roleIds);
+
+    // Created by Blue
+    /**
+     * @return
+     */
+    List<User> getUsers();
+
+    /**
+     * @param user
+     * @return
+     */
+    User updateUser(User user);
+
+    /**
+     * @param id
+     * @return
+     */
+    int removeUser(int id);
+
+    /**
+     * @param user
+     * @return
+     */
+    User saveUser(User user);
 }

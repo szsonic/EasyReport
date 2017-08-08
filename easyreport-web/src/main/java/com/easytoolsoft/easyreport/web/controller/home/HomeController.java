@@ -1,9 +1,5 @@
 package com.easytoolsoft.easyreport.web.controller.home;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import com.easytoolsoft.easyreport.common.tree.EasyUITreeNode;
 import com.easytoolsoft.easyreport.membership.domain.Module;
 import com.easytoolsoft.easyreport.membership.domain.User;
@@ -11,9 +7,10 @@ import com.easytoolsoft.easyreport.membership.service.impl.MembershipFacadeServi
 import com.easytoolsoft.easyreport.support.annotation.CurrentUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Home页控制器
@@ -40,4 +37,42 @@ public class HomeController {
         final List<Module> modules = this.membershipFacade.getModules(loginUser.getRoles());
         return this.membershipFacade.getModuleTree(modules, x -> x.getStatus() == 1);
     }
+
+    // Created by Blue
+    @ResponseBody
+    @GetMapping(value = "/users")
+    public List<User> getUsers(){
+        List<User> userList = membershipFacade.getUsers();
+        return userList;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/users/{account}")
+    public User getUsersById(@PathVariable("account") final String account){
+        User user = membershipFacade.getUser(account);
+        return user;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/users")
+    public User saveUser(final User user){
+        User u = membershipFacade.saveUser(user);
+        return u;
+    }
+
+    @ResponseBody
+    @PutMapping(value = "/users/{id}")
+    public User updateUsers(@PathVariable("id") final Integer id, final User user){
+        user.setId(id);
+        User u = membershipFacade.updateUser(user);
+        return u;
+    }
+
+    @ResponseBody
+    @DeleteMapping(value = "/users/{id}")
+    public int removeUsers(@PathVariable("id") final int id){
+        int success = membershipFacade.removeUser(id);
+        return success;
+    }
+
 }

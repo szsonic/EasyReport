@@ -93,12 +93,12 @@ var TaskMVC = {
                 }, {
                     field: 'reportIds',
                     title: '报表ids',
-                    width: 200,
+                    width: 120,
                     sortable: true
                 }, {
                     field: 'cronExpr',
                     title: 'Cron表达式',
-                    width: 150,
+                    width: 120,
                     sortable: true
                 }, {
                     field: 'type',
@@ -121,9 +121,14 @@ var TaskMVC = {
                     width: 50,
                     sortable: true
                 }, {
+                    field: 'roleIds',
+                    title: '系统角色ids',
+                    width: 50,
+                    sortable: true
+                }, {
                     field: 'options',
                     title: '操作',
-                    width: 100,
+                    width: 60,
                     formatter: function (value, row, index) {
                         var icons = [{
                             "name": "edit",

@@ -1,18 +1,13 @@
 package com.easytoolsoft.easyreport.membership.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 系统用户(easyreport_member_user表)持久化类
@@ -93,5 +88,19 @@ public class User implements Serializable {
      */
     public String getCredentialsSalt() {
         return this.account + this.salt;
+    }
+
+    public User(String roles, String account, String password, String salt, String name, String email, String telephone, Byte status, String comment, Date gmtCreated, Date gmtModified) {
+        this.roles = roles;
+        this.account = account;
+        this.password = password;
+        this.salt = salt;
+        this.name = name;
+        this.email = email;
+        this.telephone = telephone;
+        this.status = status;
+        this.comment = comment;
+        this.gmtCreated = gmtCreated;
+        this.gmtModified = gmtModified;
     }
 }

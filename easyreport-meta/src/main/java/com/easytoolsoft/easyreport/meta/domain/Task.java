@@ -1,13 +1,9 @@
 package com.easytoolsoft.easyreport.meta.domain;
 
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 报表任务(_rpt_task)持久化类
@@ -56,4 +52,8 @@ public class Task implements Serializable {
      * 报表任务记录修改时间
      */
     private Date gmtModified;
+    /**
+     * 系统角色ID列表
+     */
+    private String roleIds;
 }

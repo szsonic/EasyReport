@@ -1,25 +1,16 @@
 package com.easytoolsoft.easyreport.membership.service.impl;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import javax.annotation.Resource;
-
 import com.easytoolsoft.easyreport.common.tree.EasyUITreeNode;
 import com.easytoolsoft.easyreport.membership.domain.Module;
 import com.easytoolsoft.easyreport.membership.domain.User;
-import com.easytoolsoft.easyreport.membership.service.MembershipFacadeService;
-import com.easytoolsoft.easyreport.membership.service.ModuleService;
-import com.easytoolsoft.easyreport.membership.service.PermissionService;
-import com.easytoolsoft.easyreport.membership.service.RoleService;
-import com.easytoolsoft.easyreport.membership.service.UserService;
+import com.easytoolsoft.easyreport.membership.service.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * 用户权限服务外观类
@@ -147,5 +138,28 @@ public class MembershipFacadeServiceImpl implements MembershipFacadeService {
         }
         final String moduleIds = this.roleService.getModuleIds(roleIds);
         return this.moduleService.getModules(moduleIds);
+    }
+
+    // Created by Blue
+    @Override
+    public List<User> getUsers() {
+        return this.userService.getAll();
+    }
+
+    @Override
+    public User updateUser(User user) {
+        int id = this.userService.editById(user);
+        return this.userService.getById(id);
+    }
+
+    @Override
+    public int removeUser(int id) {
+        return this.userService.removeById(id);
+    }
+
+    @Override
+    public User saveUser(User user) {
+        int id = this.userService.add(user);
+        return this.userService.getById(id);
     }
 }

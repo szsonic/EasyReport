@@ -12,6 +12,7 @@
         <result column="comment" property="comment" jdbcType="VARCHAR"/>
         <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP"/>
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+        <result column="role_ids" property="roleIds" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -45,7 +46,7 @@
     </sql>
     <sql id="Table_Name">ezrpt_schedule_task</sql>
     <sql id="Base_Column_List_Without_Id">
-        report_ids , cron_expr , type , options , template , comment , gmt_created , gmt_modified
+        report_ids , cron_expr , type , options , template , comment , gmt_created , gmt_modified, role_ids
     </sql>
     <sql id="Base_Column_List">
         id ,
@@ -60,6 +61,7 @@
         <if test="record.comment != null">comment,</if>
         <if test="record.gmtCreated != null">gmt_created,</if>
         <if test="record.gmtModified != null">gmt_modified,</if>
+        <if test="record.roleIds != null">roles_ids,</if>
     </sql>
     <sql id="Insert_Values">
         <if test="record.reportIds != null">#{record.reportIds,jdbcType=VARCHAR},</if>
@@ -70,6 +72,7 @@
         <if test="record.comment != null">#{record.comment,jdbcType=VARCHAR},</if>
         <if test="record.gmtCreated != null">#{record.gmtCreated,jdbcType=TIMESTAMP},</if>
         <if test="record.gmtModified != null">#{record.gmtModified,jdbcType=TIMESTAMP},</if>
+        <if test="record.roleIds != null">#{record.roleIds,jdbcType=LONGVARCHAR},</if>
     </sql>
     <sql id="Batch_Insert_Values">
         #{record.reportIds,jdbcType=VARCHAR},
@@ -80,6 +83,7 @@
         #{record.comment,jdbcType=VARCHAR},
         #{record.gmtCreated,jdbcType=TIMESTAMP},
         #{record.gmtModified,jdbcType=TIMESTAMP},
+        #{record.roleIds,jdbcType=LONGVARCHAR},
     </sql>
     <sql id="Batch_Insert_Values_On_DuplicateKey">
         #{record.id,jdbcType=INTEGER},
@@ -94,6 +98,7 @@
         <if test="record.comment != null">comment = #{record.comment,jdbcType=VARCHAR} ,</if>
         <if test="record.gmtCreated != null">gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP} ,</if>
         <if test="record.gmtModified != null">gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP} ,</if>
+        <if test="record.roleIds != null">role_ids = #{record.roleIds,jdbcType=LONGVARCHAR} ,</if>
     </sql>
     <!-- insert -->
     <insert id="insert" parameterType="java.util.Map">
@@ -137,7 +142,7 @@
         ON DUPLICATE KEY UPDATE
         report_ids = VALUES(report_ids) , cron_expr = VALUES(cron_expr) , type = VALUES(type) , options =
         VALUES(options) , template = VALUES(template) , comment = VALUES(comment) , gmt_created = VALUES(gmt_created) ,
-        gmt_modified = VALUES(gmt_modified)
+        gmt_modified = VALUES(gmt_modified), role_ids = VALUES(role_ids)
     </insert>
     <!-- end insert -->
     <!-- delete -->

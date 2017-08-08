@@ -1,5 +1,7 @@
 package com.easytoolsoft.easyreport.mybatis.sharding.data;
 
+import com.easytoolsoft.easyreport.mybatis.sharding.ShardTable;
+
 /**
  * 基本增删改查(CRUD)数据访问接口
  *
@@ -14,4 +16,8 @@ public interface CrudRepository<T, U, K> extends
     DeleteRepository<T, U, K>,
     UpdateRepository<T, U>,
     SelectRepository<T, U, K> {
+	@Override
+	default T selectOneByExample(U example, ShardTable shardTable) {
+		return null;
+	}
 }
