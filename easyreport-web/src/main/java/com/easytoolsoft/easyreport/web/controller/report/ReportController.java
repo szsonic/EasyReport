@@ -124,6 +124,27 @@ public class ReportController {
         return data;
     }
 
+    @OpLog(name = "获取表格报表HTML字符串")
+    @ResponseBody
+    @PostMapping(value = "/table/getHTMLString")
+    //@RequiresPermissions("report.designer:preview")
+    public String getTableHTMLString(final String uid, final HttpServletRequest request) {
+        final StringBuffer tableHTMLString = new StringBuffer();
+        try {
+            ReportUtils.generate(uid, tableHTMLString, request);
+        } catch (QueryParamsException | NotFoundLayoutColumnException | SQLQueryException | TemplatePraseException ex) {
+            tableHTMLString.delete(0, tableHTMLString.length());
+            tableHTMLString.append("400");
+            log.error("报表生成失败", ex);
+        } catch (final Exception ex) {
+            tableHTMLString.delete(0, tableHTMLString.length());
+            tableHTMLString.append("500");
+            log.error("报表系统出错", ex);
+        }
+
+        return tableHTMLString.toString();
+    }
+
     @OpLog(name = "获取图表报表JSON格式数据")
     @ResponseBody
     @PostMapping(value = "/chart/getData.json")

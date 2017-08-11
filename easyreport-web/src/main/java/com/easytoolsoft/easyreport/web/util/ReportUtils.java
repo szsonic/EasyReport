@@ -106,12 +106,19 @@ public class ReportUtils {
         modelAndView.addObject("nonStatColumHtmlText", formView.getFormHtmlText(nonStatColumnFormElements));
     }
 
-    public static void generate(final String uid, final JSONObject data, final HttpServletRequest request) {
+    public static void generate(final String uid,  JSONObject data, final HttpServletRequest request) {
         generate(uid, data, request.getParameterMap());
+    }
+
+    public static void generate(final String uid, final StringBuffer tableHTMLString, final HttpServletRequest request) {
+        generate(uid, tableHTMLString, request.getParameterMap());
     }
 
     public static void generate(final String uid, final JSONObject data, final Map<?, ?> parameters) {
         generate(uid, data, new HashMap<>(0), parameters);
+    }
+    public static void generate(final String uid, final StringBuffer tableHTMLString, final Map<?, ?> parameters) {
+        generate(uid, tableHTMLString, new HashMap<>(0), parameters);
     }
 
     public static void generate(final String uid, final JSONObject data, final Map<String, Object> attachParams,
@@ -124,6 +131,17 @@ public class ReportUtils {
         data.put("htmlTable", reportTable.getHtmlText());
         data.put("metaDataRowCount", reportTable.getMetaDataRowCount());
         data.put("metaDataColumnCount", reportTable.getMetaDataColumnCount());
+    }
+
+    public static void generate(final String uid, final StringBuffer tableHTMLString, final Map<String, Object> attachParams, final Map<?, ?> parameters) {
+        if (StringUtils.isBlank(uid)) {
+            tableHTMLString.delete(0, tableHTMLString.length());
+            tableHTMLString.append("null");
+            return;
+        }
+        final ReportTable reportTable = generate(uid, attachParams, parameters);
+        tableHTMLString.delete(0, tableHTMLString.length());
+        tableHTMLString.append(reportTable.getHtmlText());
     }
 
     public static void generate(final Queryer queryer, final ReportParameter reportParameter, final JSONObject data) {

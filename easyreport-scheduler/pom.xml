@@ -125,6 +125,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.easytoolsoft</groupId>
+            <artifactId>easyreport-membership</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

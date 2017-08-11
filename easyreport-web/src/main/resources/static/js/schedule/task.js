@@ -51,7 +51,7 @@ var TaskMVC = {
     },
     Model: {
         reports: {},
-        roles:{}
+        roles: {}
     },
     View: {
         initControl: function () {
@@ -97,6 +97,11 @@ var TaskMVC = {
                     width: 50,
                     sortable: true
                 }, {
+                    field: 'name',
+                    title: '任务名称',
+                    width: 80,
+                    sortable: true
+                }, {
                     field: 'reportIds',
                     title: '报表ids',
                     width: 120,
@@ -116,11 +121,6 @@ var TaskMVC = {
                         if (value === 2) return "手机短信";
                         return "其他";
                     }
-                }, {
-                    field: 'name',
-                    title: '任务名称',
-                    width: 80,
-                    sortable: true
                 }, {
                     field: 'comment',
                     title: '说明',
@@ -236,13 +236,29 @@ var TaskMVC = {
             var row = $('#task-datagrid').datagrid('getSelected');
             if (row) {
                 var options = TaskMVC.Util.getOptions();
-                var roleIds = row.roles || "";
+                var reportIds = row.reportIds || "";
+                var roleIds = row.roleIds || "";
                 options.iconCls = 'icon-edit1';
                 options.data = row;
                 options.title = '修改[' + options.data.name + ']任务';
                 EasyUIUtils.openEditDlg(options);
-                TaskMVC.Util.fillReportCombox("edit", roleIds.split(','));
-                TaskMVC.Util.fillRolesCombox("edit", roleIds.split(','));
+
+                var reportIdsArray = reportIds.split(',');
+                for (var i = 0; i < reportIdsArray.length; i++) {
+                    if (reportIdsArray[i] == "" || typeof(reportIdsArray[i]) == "undefined") {
+                        reportIdsArray.splice(i, 1);
+                        i = i - 1;
+                    }
+                }
+                var roleIdsArray = roleIds.split(',');
+                for (var i = 0; i < roleIdsArray.length; i++) {
+                    if (roleIdsArray[i] == "" || typeof(roleIdsArray[i]) == "undefined") {
+                        roleIdsArray.splice(i, 1);
+                        i = i - 1;
+                    }
+                }
+                TaskMVC.Util.fillReportCombox("edit", reportIdsArray);
+                TaskMVC.Util.fillRolesCombox("edit", roleIdsArray);
             } else {
                 $.messager.alert('警告', '请选中一条记录!', 'info');
             }
@@ -341,11 +357,11 @@ var TaskMVC = {
             }
         },
         loadReportList: function () {
-            $.getJSON(TaskMVC.URLs.getAllReports.url+ "?id=711", function (src) {
+            $.getJSON(TaskMVC.URLs.getAllReports.url, function (src) {
                 TaskMVC.Model.reports = src.data.rows;
             });
         },
-        loadRolesList:function () {
+        loadRolesList: function () {
             $.getJSON(TaskMVC.URLs.getAllRoles.url, function (src) {
                 TaskMVC.Model.roles = src.data.rows;
             });
