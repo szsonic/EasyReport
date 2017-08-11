@@ -55,7 +55,7 @@ public class ScheduleTask implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
 		Task task = (Task) jobDataMap.get("task");
-		Integer integer = task.getId();
+		String taskDirName = task.getId() + "-" + task.getName();
 
 		//取得所有角色
 		String[] roleIdArray = task.getRoleIds().split(",");
@@ -115,7 +115,7 @@ public class ScheduleTask implements Job {
 			}
 			log.info("ReportHTMLData: ", tableHTML.toString());
 			String htmlText = tableHTML.getData();
-			generateExcelFile(report.getUid(), report.getName(), htmlText);
+			generateExcelFile(taskDirName, report.getUid(), report.getName(), htmlText);
 		}
 
 	}
@@ -128,7 +128,7 @@ public class ScheduleTask implements Job {
 		return ints;
 	}
 
-	private void generateExcelFile(final String uid, final String name, String htmlText) {
+	private void generateExcelFile(final String taskDirName, final String uid, final String reportName, String htmlText) {
 		htmlText = htmlText.replaceFirst("<table>", "<tableFirst>");
 		htmlText = htmlText.replaceAll("<table>",
 				"<table cellpadding=\"3\" cellspacing=\"0\"  border=\"1\" rull=\"all\" style=\"border-collapse: "
@@ -136,18 +136,25 @@ public class ScheduleTask implements Job {
 		htmlText = htmlText.replaceFirst("<tableFirst>", "<table>");
 		FileOutputStream fos = null;
 		try {
-			String fileName = Calendar.getInstance().getTimeInMillis() + "-" + name + ".xls";
+			String fileName = Calendar.getInstance().getTimeInMillis() + "-" + reportName + "报表.xls";
 			//查找或生成目录
-			File dir = new File(DateUtils.getNow("yyyyMMdd"));
-			if (!dir.exists() && !dir.isDirectory()) {
-				log.info("文件夹" + dir.getName() + "不存在");
-				dir.mkdir();
+			File createDateDir = new File(DateUtils.getNow("yyyyMMdd"));
+			if (!createDateDir.exists() && !createDateDir.isDirectory()) {
+				log.info("文件夹" + createDateDir.getName() + "不存在");
+				createDateDir.mkdir();
 			}
-			if (dir.exists() && dir.isDirectory()) {
-				File file = new File(dir.getName(), fileName);
-				fos = new FileOutputStream(file);
-				fos.write(htmlText.getBytes());
-				fos.flush();
+			if (createDateDir.exists() && createDateDir.isDirectory()) {
+				File taskDir = new File(createDateDir.getName() + "\\" + taskDirName);
+				if (!taskDir.exists() && !taskDir.isDirectory()) {
+					log.info("文件夹" + taskDir.getName() + "不存在");
+					taskDir.mkdir();
+				}
+				if (taskDir.exists() && taskDir.isDirectory()) {
+					File file = new File(createDateDir.getName() + "\\" + taskDir.getName(), fileName);
+					fos = new FileOutputStream(file);
+					fos.write(htmlText.getBytes());
+					fos.flush();
+				}
 			}
 		} catch (final Exception ex) {
 			throw new RuntimeException(ex);
