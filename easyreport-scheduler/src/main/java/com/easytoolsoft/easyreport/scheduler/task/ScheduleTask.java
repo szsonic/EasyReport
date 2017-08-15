@@ -20,8 +20,12 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,9 +54,14 @@ public class ScheduleTask implements Job {
 	@Autowired
 	ReportRepository reportRepository;
 
+	@Autowired
+	JavaMailSender javaMailSender;
+
 	@OpLog(name = "生成Excel文件对象")
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
+
+
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
 		Task task = (Task) jobDataMap.get("task");
 		String taskDirName = task.getId() + "-" + task.getName();
@@ -75,9 +84,9 @@ public class ScheduleTask implements Job {
 		List<User> userList = userRepository.selectByExample(userExample);
 
 		//获得所有用户的eamil集合
-		List<String> emailList = new ArrayList<>();
+		List<String> sendEmailUserList = new ArrayList<>();
 		for (User user : userList) {
-			emailList.add(user.getEmail());
+			sendEmailUserList.add(user.getEmail());
 		}
 
 		//取得所有报表
@@ -87,7 +96,7 @@ public class ScheduleTask implements Job {
 		ReportExample reportExample = new ReportExample();
 		reportExample.createCriteria().andIdIn(reportIdList);
 		List<Report> reportList = reportRepository.selectByExample(reportExample);
-
+		List<File> excelList=new ArrayList<>();
 		//生成所有报表文件发送集合
 		for (Report report : reportList) {
 			String url = "http://localhost:9000/report/table/getHTMLString";
@@ -110,9 +119,12 @@ public class ScheduleTask implements Job {
 				break;
 			}
 			String htmlText = tableHTML.getData();
-			generateExcelFile(taskDirName, report.getUid(), report.getName(), htmlText);
+			File excel=generateExcelFile(taskDirName, report.getUid(), report.getName(), htmlText);
+			if(excel!=null){
+				excelList.add(excel);
+			}
 		}
-
+		this.sendEmail(sendEmailUserList,excelList);
 	}
 
 	private Integer[] stringToInteger(String[] arrs) {
@@ -123,7 +135,7 @@ public class ScheduleTask implements Job {
 		return ints;
 	}
 
-	private void generateExcelFile(final String taskDirName, final String uid, final String reportName, String htmlText) {
+	private File generateExcelFile(final String taskDirName, final String uid, final String reportName, String htmlText) {
 		htmlText = htmlText.replaceFirst("<table>", "<tableFirst>");
 		htmlText = htmlText.replaceAll("<table>",
 				"<table cellpadding=\"3\" cellspacing=\"0\"  border=\"1\" rull=\"all\" style=\"border-collapse: "
@@ -149,8 +161,10 @@ public class ScheduleTask implements Job {
 					fos = new FileOutputStream(file);
 					fos.write(htmlText.getBytes());
 					fos.flush();
+					return file;
 				}
 			}
+			return null;
 		} catch (final Exception ex) {
 			throw new RuntimeException(ex);
 		} finally {
@@ -161,6 +175,27 @@ public class ScheduleTask implements Job {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+
+
+	private void sendEmail(List<String> emails,List<File> excels){
+		MimeMessage mimeMessage=javaMailSender.createMimeMessage();
+		try {
+			for (String email : emails) {
+				for (File excel : excels) {
+					MimeMessageHelper helper=new MimeMessageHelper(mimeMessage,true);
+					helper.addAttachment(excel.getName(),excel);
+					helper.setFrom("tech@innjia.com");
+					helper.setTo(email);
+					helper.setSubject("EasyReport定时任务报表");
+					helper.setText("EasyReport自动发送报表，请勿回复");
+					javaMailSender.send(mimeMessage);
+				}
+			}
+		} catch (MessagingException e) {
+			log.error("发送邮件异常:",e);
 		}
 	}
 }
