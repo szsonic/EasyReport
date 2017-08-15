@@ -67,12 +67,9 @@ public class ScheduleTask implements Job {
 
 		//取得所有用户
 		List<String> usedRoleIdList = new ArrayList<>();
-		System.out.print("usedRoleIdList=[");
 		for (Role role : roleList) {
 			usedRoleIdList.add(role.getId().toString());
-			System.out.print(role.getId() + " ");
 		}
-		System.out.println("]");
 		UserExample userExample = new UserExample();
 		userExample.createCriteria().andRolesIn(usedRoleIdList);
 		List<User> userList = userRepository.selectByExample(userExample);
@@ -81,7 +78,6 @@ public class ScheduleTask implements Job {
 		List<String> emailList = new ArrayList<>();
 		for (User user : userList) {
 			emailList.add(user.getEmail());
-			System.out.println("email:" + user.getEmail());
 		}
 
 		//取得所有报表
@@ -113,7 +109,6 @@ public class ScheduleTask implements Job {
 				log.error("uid参数为空");
 				break;
 			}
-			log.info("ReportHTMLData: ", tableHTML.toString());
 			String htmlText = tableHTML.getData();
 			generateExcelFile(taskDirName, report.getUid(), report.getName(), htmlText);
 		}
@@ -139,7 +134,7 @@ public class ScheduleTask implements Job {
 			String fileName = Calendar.getInstance().getTimeInMillis() + "-" + reportName + "报表.xls";
 			//查找或生成目录
 			File createDateDir = new File(DateUtils.getNow("yyyyMMdd"));
-			if (!createDateDir.exists() && !createDateDir.isDirectory()) {
+			if (!createDateDir.exists() || !createDateDir.isDirectory()) {
 				log.info("文件夹" + createDateDir.getName() + "不存在");
 				createDateDir.mkdir();
 			}
