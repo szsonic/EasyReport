@@ -26,9 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -143,7 +141,7 @@ public class ScheduleTask implements Job {
 		htmlText = htmlText.replaceFirst("<tableFirst>", "<table>");
 		FileOutputStream fos = null;
 		try {
-			String fileName = Calendar.getInstance().getTimeInMillis() + "-" + reportName + "报表.xls";
+			String fileName = Calendar.getInstance().getTimeInMillis() + "-" + reportName + ".xls";
 			//查找或生成目录
 			File createDateDir = new File(DateUtils.getNow("yyyyMMdd"));
 			if (!createDateDir.exists() || !createDateDir.isDirectory()) {
@@ -158,9 +156,14 @@ public class ScheduleTask implements Job {
 				}
 				if (taskDir.exists() && taskDir.isDirectory()) {
 					File file = new File(createDateDir.getName() + File.separator + taskDir.getName(), fileName);
-					fos = new FileOutputStream(file);
-					fos.write(htmlText.getBytes());
-					fos.flush();
+
+					PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"utf-8")));
+					out.write(htmlText);
+					out.flush();
+
+//					fos = new FileOutputStream(file);
+//					fos.write(htmlText.getBytes());
+//					fos.flush();
 					return file;
 				}
 			}
@@ -178,8 +181,6 @@ public class ScheduleTask implements Job {
 		}
 	}
 
-
-
 	private void sendEmail(List<String> emails,List<File> excels){
 		MimeMessage mimeMessage=javaMailSender.createMimeMessage();
 		log.info("开始发送邮件");
@@ -188,7 +189,7 @@ public class ScheduleTask implements Job {
 				for (File excel : excels) {
 					log.info("进入循环:发送邮箱+"+email);
 					MimeMessageHelper helper=new MimeMessageHelper(mimeMessage,true);
-					helper.addAttachment("测试报表.xls",excel);
+					helper.addAttachment(excel.getName(),excel);
 					helper.setFrom("tech@innjia.com");
 					helper.setTo(email);
 					helper.setSubject("EasyReport定时任务报表");
