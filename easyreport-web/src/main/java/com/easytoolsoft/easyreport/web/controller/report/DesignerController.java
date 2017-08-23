@@ -57,8 +57,8 @@ public class DesignerController
     public Map<String, Object> list(final DataGridPager pager, final Integer id) {
         final PageInfo pageInfo = this.getPageInfo(pager);
         //update by Blue
-//        final List<Report> list = this.service.getByPage(pageInfo, "t1.category_id", id == null ? 0 : id);
-        final List<Report> list = this.service.getByPage(pageInfo, "0", 0);
+        final List<Report> list = this.service.getByPage(pageInfo, "t1.category_id", id == null ? 0 : id);
+//        final List<Report> list = this.service.getByPage(pageInfo, "0", 0);
         final Map<String, Object> modelMap = new HashMap<>(2);
         modelMap.put("total", pageInfo.getTotals());
         modelMap.put("rows", list);

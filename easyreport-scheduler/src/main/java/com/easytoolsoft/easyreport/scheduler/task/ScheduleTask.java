@@ -151,13 +151,13 @@ public class ScheduleTask implements Job {
 				createDateDir.mkdir();
 			}
 			if (createDateDir.exists() && createDateDir.isDirectory()) {
-				File taskDir = new File(createDateDir.getName() + "\\" + taskDirName);
+				File taskDir = new File(createDateDir.getName() + File.separator + taskDirName);
 				if (!taskDir.exists() && !taskDir.isDirectory()) {
 					log.info("文件夹" + taskDir.getName() + "不存在");
 					taskDir.mkdir();
 				}
 				if (taskDir.exists() && taskDir.isDirectory()) {
-					File file = new File(createDateDir.getName() + "\\" + taskDir.getName(), fileName);
+					File file = new File(createDateDir.getName() + File.separator + taskDir.getName(), fileName);
 					fos = new FileOutputStream(file);
 					fos.write(htmlText.getBytes());
 					fos.flush();
@@ -182,11 +182,13 @@ public class ScheduleTask implements Job {
 
 	private void sendEmail(List<String> emails,List<File> excels){
 		MimeMessage mimeMessage=javaMailSender.createMimeMessage();
+		log.info("开始发送邮件");
 		try {
 			for (String email : emails) {
 				for (File excel : excels) {
+					log.info("进入循环:发送邮箱+"+email);
 					MimeMessageHelper helper=new MimeMessageHelper(mimeMessage,true);
-					helper.addAttachment(excel.getName(),excel);
+					helper.addAttachment("测试报表.xls",excel);
 					helper.setFrom("tech@innjia.com");
 					helper.setTo(email);
 					helper.setSubject("EasyReport定时任务报表");

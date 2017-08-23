@@ -34,7 +34,7 @@ public class User implements Serializable {
      * 系统用户账号
      */
     @NotEmpty(message = "{member.user.account.NotEmpty}")
-    @Length(min = 8, max = 20, message = "{member.user.account.Length}")
+    @Length(min = 5, max = 20, message = "{member.user.account.Length}")
     private String account;
     /**
      * 系统用户密码
