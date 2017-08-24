@@ -360,7 +360,7 @@ var DesignerMVC = {
                                 var row = result.data;
                                 row.name = row.name + index;
                                 row.text = row.name;
-                                row.type = 4;
+                                row.type = 3;
                                 row.sortType = 0;
                                 $('#report-meta-column-grid').datagrid('appendRow', row);
                             }

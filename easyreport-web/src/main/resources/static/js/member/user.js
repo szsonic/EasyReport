@@ -4,10 +4,10 @@ $(function () {
 
 var MembershipUser = {
     init: function () {
+        UserMVC.View.initData();
         UserMVC.View.initControl();
         UserMVC.View.bindEvent();
         UserMVC.View.bindValidate();
-        UserMVC.View.initData();
     }
 };
 
@@ -129,6 +129,29 @@ var UserMVC = {
                     width: 50,
                     sortable: true
                 }, {
+                    field: 'roles',
+                    title: '所属角色',
+                    width: 80,
+                    sortable: true,
+                    formatter:function (value, row, index) {
+                        var rolesArr=value.split(",");//角色Id字符串
+                        var items = UserMVC.Model.roles;
+                        var roleName="";
+                        for (var i = 0; i < items.length; i++) {
+                            var item = items[i];
+                            for (var k = 0; k < rolesArr.length; k++) {
+                                if (rolesArr[k] === item.id) {
+                                    if(roleName!==""){
+                                        roleName = roleName +","+ item.name
+                                    }else{
+                                        roleName = roleName + item.name
+                                    }
+                                }
+                            }
+                        }
+                        return roleName;
+                    }
+                },{
                     field: 'options',
                     title: '操作',
                     width: 100,
