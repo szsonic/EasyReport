@@ -26,7 +26,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -157,9 +159,12 @@ public class ScheduleTask implements Job {
 				if (taskDir.exists() && taskDir.isDirectory()) {
 					File file = new File(createDateDir.getName() + File.separator + taskDir.getName(), fileName);
 
-					PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"utf-8")));
-					out.write(htmlText);
-					out.flush();
+					//excel文件用字节数组写入BOM
+					byte[] bs={(byte)0xef,(byte)0xbb,(byte)0xbf};
+					fos = new FileOutputStream(file);
+					fos.write(bs);
+					fos.write(htmlText.getBytes());
+					fos.flush();
 
 //					fos = new FileOutputStream(file);
 //					fos.write(htmlText.getBytes());
