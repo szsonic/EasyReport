@@ -194,7 +194,7 @@ public class ScheduleTask implements Job {
 				for (File excel : excels) {
 					log.info("进入循环:发送邮箱+"+email);
 					MimeMessageHelper helper=new MimeMessageHelper(mimeMessage,true);
-					System.out.println(excel.getCanonicalFile().getName());
+					log.info(excel.getCanonicalFile().getName());
 					helper.addAttachment("测试报表.xls", excel);
 					helper.setFrom("tech@innjia.com");
 					helper.setTo(email);
