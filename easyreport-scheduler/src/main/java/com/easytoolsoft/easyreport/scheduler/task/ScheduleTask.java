@@ -71,7 +71,8 @@ public class ScheduleTask implements Job {
 		Integer[] roleIds = stringToInteger(roleIdArray);
 		List<Integer> roleIdList = Arrays.asList(roleIds);
 		RoleExample roleExample = new RoleExample();
-		roleExample.createCriteria().andIdIn(roleIdList);
+		Byte status = 1;
+		roleExample.createCriteria().andIdIn(roleIdList).andStatusEqualTo(status);
 		List<Role> roleList = roleRepository.selectByExample(roleExample);
 
 		//取得所有用户
@@ -80,7 +81,8 @@ public class ScheduleTask implements Job {
 			usedRoleIdList.add(role.getId().toString());
 		}
 		UserExample userExample = new UserExample();
-		userExample.createCriteria().andRolesIn(usedRoleIdList);
+		Byte status1 = 1;
+		userExample.createCriteria().andRolesIn(usedRoleIdList).andStatusEqualTo(status1);
 		List<User> userList = userRepository.selectByExample(userExample);
 
 		//获得所有用户的eamil集合
